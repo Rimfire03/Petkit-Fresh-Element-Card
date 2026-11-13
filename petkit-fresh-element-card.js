@@ -3,7 +3,7 @@
  * Entities are derived from the schedule switch id (switch.<prefix>_feeding_schedule)
  * and can each be overridden in the card config. */
 
-const CARD_VERSION = "0.09-dev";
+const CARD_VERSION = "0.11";
 const DEFAULT_IMAGE =
   "https://media.zooplus.com/bilder/0/400/611370_pla_petkit_fresh_element_solo_white_1000x1000_hs_01_0.jpg";
 const GRAMS_PER_PORTION = 10; // 1 portion = 10 g (raw data: portion 5 -> 50 g)
