@@ -7,7 +7,8 @@ const CARD_VERSION = "0.09-dev";
 const DEFAULT_IMAGE =
   "https://media.zooplus.com/bilder/0/400/611370_pla_petkit_fresh_element_solo_white_1000x1000_hs_01_0.jpg";
 const GRAMS_PER_PORTION = 10; // 1 portion = 10 g (raw data: portion 5 -> 50 g)
-const MANUAL_PORTIONS = [1, 2, 3, 4, 5];
+const MANUAL_PORTIONS = [1, 2, 3, 4, 5, 10];
+const MAX_FEED_G = 50; // max accepted by the manual feeding text entity
 const DAYS = ["L", "M", "M", "J", "V", "S", "D"]; // weekday n = index + 1, Monday = 1
 const DAY_NAMES = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
@@ -198,6 +199,14 @@ class PetkitFreshElementCard extends HTMLElement {
     if (c[key]) return c[key];
     const t = ENTITY_TEMPLATES[key] || (SETTINGS.find((s) => s[0] === key) || [])[1];
     return t ? t.replace("{p}", this._prefix) : null;
+  }
+  // resolves once the feeder has started then finished a manual feed (or after a timeout)
+  async _waitFeedEnd() {
+    const wait = async (target, max) => {
+      for (let i = 0; i < max && !this._abortFeed && this._st("feeding")?.state !== target; i++) await new Promise((r) => setTimeout(r, 1000));
+    };
+    await wait("on", 15);
+    await wait("off", 120);
   }
   _entityIds() { return [...Object.keys(ENTITY_TEMPLATES), ...SETTINGS.map((s) => s[0])].map((k) => this._id(k)); }
   _stId(id) { return (this._sim && this._simStates[id]) || this._hass?.states[id]; }
@@ -404,8 +413,18 @@ class PetkitFreshElementCard extends HTMLElement {
     const svc = (name) => { const [d, s] = (acts[name] || "").split("."); return [d || "petkit", s]; };
 
     switch (a) {
-      case "feed": this._call("text", "set_value", { entity_id: this._id("manual"), value: v }); break;
-      case "cancel-feed": this._press("cancel_manual"); break;
+      case "feed": { // the text entity only accepts 10-50 g: split bigger amounts, wait for each feed to end
+        if (this._feedBusy) break;
+        this._feedBusy = true; this._abortFeed = false;
+        try {
+          for (let left = Number(v); left > 0 && !this._abortFeed; left -= MAX_FEED_G) {
+            await this._call("text", "set_value", { entity_id: this._id("manual"), value: String(Math.min(MAX_FEED_G, left)) });
+            if (left > MAX_FEED_G) await this._waitFeedEnd();
+          }
+        } finally { this._feedBusy = false; }
+        break;
+      }
+      case "cancel-feed": this._abortFeed = true; this._press("cancel_manual"); break;
       case "toggle-global": this._call("switch", "toggle", { entity_id: this._id("schedule") }); break;
       case "sim-toggle": this._setSim(!this._sim); break;
       case "toggle-schedule": this._showSchedule = !this._showSchedule; this._edit = null; this._render(); break;
