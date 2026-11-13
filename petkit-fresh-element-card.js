@@ -21,7 +21,7 @@ const MODELS = {
   d4sh: { name: "Fresh Element dual hopper (D4SH)", match: /d4sh/i, image: DUAL_IMAGE },
   d3: { name: "Fresh Element 3 (D3)", match: /\b3\b|d3/i, image: D3_IMAGE },
   mini: { name: "Fresh Element Mini", match: /mini/i },
-  d1: { name: "Fresh Element (D1)", match: /^fresh element$|d1/i },
+  d1: { name: "Fresh Element (D1)", match: /^fresh element$|d1/i, image: SOLO_IMAGE },
 };
 
 // config key -> [domain, translation_key] in the petkit integration
