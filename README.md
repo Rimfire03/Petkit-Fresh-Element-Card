@@ -2,6 +2,8 @@
 
 Carte Lovelace pour le distributeur PetKit Fresh Element Solo (intégration HA `petkit`) : état, distribution manuelle, planning éditable (ajout / modification / suppression / ignorer aujourd'hui), réglages.
 
+<p align="center"><img src="docs/screenshot.png" alt="Petkit Fresh Element Card" width="360"></p>
+
 ## Installation
 
 Copier `petkit-fresh-element-card.js` dans `/config/www/`, puis ajouter la ressource `/local/petkit-fresh-element-card.js` (type module).
