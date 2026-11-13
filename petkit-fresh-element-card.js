@@ -597,7 +597,7 @@ class PetkitFreshElementCard extends HTMLElement {
     const cancel = this._id("cancel_manual") ? `<button class="btn danger" data-a="cancel-feed">${this._l("cancel")}</button>` : "";
     return keys.map((k, i) => {
       const vals = this._manualValues(k);
-      if (k === "manual" && vals[vals.length - 1] === MAX_FEED_G) vals.push(MAX_FEED_G * 2); // sent as 2 x 50 g
+      if (k === "manual" && ["solo", "d4h"].includes(this._model()) && vals[vals.length - 1] === MAX_FEED_G) vals.push(MAX_FEED_G * 2); // Solo only: 100 g is sent as 2 x 50 g
       const unit = k === "manual" ? " g" : "";
       const note = single && gpp > 1 && caps.amount?.unit !== "g" ? `<span class="sub">${this._l("portion_note", { g: gpp })}</span>` : "";
       return `<div class="section-title">${esc(this._name(k))} ${note}</div>
