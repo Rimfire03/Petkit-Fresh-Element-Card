@@ -3,7 +3,7 @@
  * Entities are derived from the schedule switch id (switch.<prefix>_feeding_schedule)
  * and can each be overridden in the card config. */
 
-const CARD_VERSION = "0.04";
+const CARD_VERSION = "0.09-dev";
 const DEFAULT_IMAGE =
   "https://media.zooplus.com/bilder/0/400/611370_pla_petkit_fresh_element_solo_white_1000x1000_hs_01_0.jpg";
 const GRAMS_PER_PORTION = 10; // 1 portion = 10 g (raw data: portion 5 -> 50 g)
@@ -138,6 +138,17 @@ const STYLES = `
   .setting .sw { width: 30px; height: 16px; border-radius: 8px; background: rgba(128,128,128,.4); position: relative; flex: none; }
   .setting .sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: left .15s; }
   .setting.on .sw { background: var(--primary-color, #03a9f4); } .setting.on .sw::after { left: 16px; }
+
+  .dev-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 16px; padding: 8px 12px; border: 1px dashed var(--divider-color, rgba(128,128,128,.4)); border-radius: 12px; }
+  .dev-tools-title { font-size: .75rem; color: var(--secondary-text-color, #727272); flex: 1 1 100%; }
+  .dev-tools-btn { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--primary-color, #03a9f4); background: transparent; color: var(--primary-color, #03a9f4);
+    font-size: .8rem; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .dev-tools-btn:hover, .dev-tools-btn.on { background: var(--primary-color, #03a9f4); color: var(--text-primary-color, #fff); }
+  .sim-fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; flex: 1 1 100%; }
+  .sim-field { display: flex; flex-direction: column; gap: 2px; font-size: .7rem; color: var(--secondary-text-color, #727272); }
+  .sim-field input[type=number], .sim-field select { font-size: .85rem; padding: 4px 6px; border-radius: 8px; border: 1px solid var(--divider-color, rgba(128,128,128,.4));
+    background: var(--card-background-color, #fff); color: var(--primary-text-color, #212121); }
+  .sim-field input[type=checkbox] { align-self: flex-start; }
 `;
 
 class PetkitFreshElementCard extends HTMLElement {
@@ -150,6 +161,9 @@ class PetkitFreshElementCard extends HTMLElement {
     this._sig = "";
     this.shadowRoot.addEventListener("click", (e) => this._onClick(e));
     this.shadowRoot.addEventListener("input", (e) => this._onInput(e));
+    this.shadowRoot.addEventListener("change", (e) => this._onChange(e));
+    this._sim = false; // dev builds only: actions are played locally, never sent
+    this._simStates = {};
   }
 
   setConfig(config) {
@@ -169,7 +183,7 @@ class PetkitFreshElementCard extends HTMLElement {
     }).join("|");
     if (sig === this._sig) return;
     this._sig = sig;
-    if (!this._edit) this._render(); // never wipe an open editor
+    if (!this._edit && !this._sim) this._render(); // never wipe an open editor or a simulation
   }
 
   getCardSize() { return 9; }
@@ -186,8 +200,78 @@ class PetkitFreshElementCard extends HTMLElement {
     return t ? t.replace("{p}", this._prefix) : null;
   }
   _entityIds() { return [...Object.keys(ENTITY_TEMPLATES), ...SETTINGS.map((s) => s[0])].map((k) => this._id(k)); }
-  _st(key) { return this._hass?.states[this._id(key)]; }
-  _call(domain, service, data) { return this._hass.callService(domain, service, data); }
+  _stId(id) { return (this._sim && this._simStates[id]) || this._hass?.states[id]; }
+  _st(key) { return this._stId(this._id(key)); }
+  _call(domain, service, data) { return this._sim ? this._simCall(domain, service, data) : this._hass.callService(domain, service, data); }
+
+  // ---- Simulation (dev builds only) ----
+  _setSim(on) {
+    this._sim = on;
+    this._simStates = {};
+    clearTimeout(this._simT);
+    const id = this._id("schedule"), s = this._hass?.states[id];
+    if (on && s) this._simStates[id] = { state: s.state, attributes: JSON.parse(JSON.stringify(s.attributes)) };
+    this._edit = null;
+    this._render();
+  }
+  _simSet(key, state, attributes) {
+    const id = this._id(key);
+    this._simStates[id] = { state: String(state), attributes: attributes || this._stId(id)?.attributes || {} };
+  }
+  _simNum(key) { return parseFloat(this._st(key)?.state) || 0; }
+  _simCall(domain, service, data) {
+    if (domain === "text" && service === "set_value") {
+      const g = Number(data.value) || 0;
+      this._simSet("manual_total", this._simNum("manual_total") + g);
+      this._simSet("dispensed_total", this._simNum("dispensed_total") + g);
+      this._simSet("dispense_count", this._simNum("dispense_count") + 1);
+      this._simSet("feeding", "on");
+      clearTimeout(this._simT);
+      this._simT = setTimeout(() => { this._simSet("feeding", "off"); this._render(); }, 5000);
+    } else if (domain === "button") {
+      if (data.entity_id === this._id("cancel_manual")) this._simSet("feeding", "off");
+      else if (data.entity_id === this._id("reset_desiccant")) this._simSet("desiccant_days", 30);
+    } else if (domain === "switch") {
+      const s = this._stId(data.entity_id);
+      if (s) this._simStates[data.entity_id] = { state: s.state === "on" ? "off" : "on", attributes: s.attributes };
+    } else if (domain === "petkit") {
+      const att = this._st("schedule").attributes, today = ((new Date().getDay() + 6) % 7) + 1;
+      let list = [...(att.schedule || [])];
+      const upd = (key, patch) => (list = list.map((x) => (x.key === key ? { ...x, ...patch } : x)));
+      if (service.startsWith("add")) {
+        list.push({ key: String(data.hour * 3600 + data.minute * 60), hour: data.hour, minute: data.minute, values: data.values, weekdays: data.weekdays,
+          label: data.label, status: "pending", native_status: null, enabled: true, today: data.weekdays.includes(today), readonly: false });
+      } else if (service.startsWith("edit")) {
+        upd(data.key, { hour: data.hour, minute: data.minute, values: data.values, weekdays: data.weekdays, label: data.label, today: data.weekdays.includes(today) });
+      } else if (service.startsWith("remove")) list = list.filter((x) => x.key !== data.key);
+      else if (service.startsWith("skip")) upd(data.key, { status: "skipped" });
+      else if (service.startsWith("restore")) upd(data.key, { status: "pending" });
+      this._simSet("schedule", this._st("schedule").state, { ...att, schedule: list });
+      this._simSet("planned_total", list.filter((x) => x.today && x.enabled !== false).reduce((n, x) => n + (x.values?.[0] || 0) * GRAMS_PER_PORTION, 0));
+    }
+    this._render();
+  }
+  _devHtml() {
+    if (!CARD_VERSION.includes("-dev")) return "";
+    const f = (label, inner) => `<label class="sim-field"><span>${label}</span>${inner}</label>`;
+    const num = (k, label, step = 1) => f(label, `<input type="number" data-sim="${k}" step="${step}" min="0" value="${esc(this._st(k)?.state ?? "")}">`);
+    const chk = (k, label) => f(label, `<input type="checkbox" data-sim="${k}" ${this._st(k)?.state === "on" ? "checked" : ""}>`);
+    const sel = (k, label, opts) => f(label, `<select data-sim="${k}">${opts.map((o) => `<option ${this._st(k)?.state === o ? "selected" : ""}>${o}</option>`).join("")}</select>`);
+    const fields = this._sim
+      ? `<div class="sim-fields">${sel("state", "État", ["online_ac", "online_battery", "offline"])}${sel("error", "Erreur", ["No error", "food_blocked", "motor_error"])}
+        ${chk("food_low", "Réservoir bas")}${chk("feeding", "Distribution en cours")}${num("battery", "Batterie %")}${num("desiccant_days", "Déshydratant (j)")}
+        ${num("planned_total", "Planifié (g)", 10)}${num("dispensed_total", "Distribué (g)", 10)}${num("dispense_count", "Distributions")}${num("manual_total", "Manuel (g)", 10)}</div>`
+      : "";
+    return `<div class="dev-tools"><span class="dev-tools-title">${this._sim ? "Simulation active : rien n'est envoyé à l'appareil" : "Version dev : simulation des actions et des informations"}</span>
+      <button class="dev-tools-btn ${this._sim ? "on" : ""}" data-a="sim-toggle">${this._sim ? "Arrêter la simulation" : "Simuler"}</button>${fields}</div>`;
+  }
+  _onChange(e) {
+    const k = e.target.dataset?.sim, t = e.target;
+    if (!k || !this._sim) return;
+    this._simSet(k, t.type === "checkbox" ? (t.checked ? "on" : "off") : t.value);
+    if (k === "state") this._simSet("power_type", t.value === "online_battery" ? "battery" : "main_power");
+    this._render();
+  }
   _press(key) { const id = this._id(key); if (id) this._call("button", "press", { entity_id: id }); }
 
   _render() {
@@ -223,6 +307,7 @@ class PetkitFreshElementCard extends HTMLElement {
         <div class="title">${esc(this._config.title || "Fresh Element Solo")}</div>
         <span class="badge ${badge[0]}"><span class="dot"></span>${esc(badge[1])}</span>
       </div>
+      ${this._devHtml()}
       <div class="image-container">
         <img class="feeder-img" src="${esc(this._config.image || DEFAULT_IMAGE)}" alt="Fresh Element Solo">
         ${foodLow ? `<span class="chip tl bad"><ha-icon icon="mdi:food-drumstick-off"></ha-icon>Remplir</span>` : ""}
@@ -322,6 +407,7 @@ class PetkitFreshElementCard extends HTMLElement {
       case "feed": this._call("text", "set_value", { entity_id: this._id("manual"), value: v }); break;
       case "cancel-feed": this._press("cancel_manual"); break;
       case "toggle-global": this._call("switch", "toggle", { entity_id: this._id("schedule") }); break;
+      case "sim-toggle": this._setSim(!this._sim); break;
       case "toggle-schedule": this._showSchedule = !this._showSchedule; this._edit = null; this._render(); break;
       case "toggle-settings": this._showSettings = !this._showSettings; this._render(); break;
       case "toggle": this._call("switch", "toggle", { entity_id: this._id(k) }); break;
