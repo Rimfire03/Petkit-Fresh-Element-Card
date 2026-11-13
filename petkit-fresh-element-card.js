@@ -147,6 +147,7 @@ class PetkitFreshElementCard extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this._edit = null; // schedule entry being edited / created
     this._showSettings = false;
+    this._showSchedule = false; // planning folded by default
     this._sig = "";
     this.shadowRoot.addEventListener("click", (e) => this._onClick(e));
     this.shadowRoot.addEventListener("input", (e) => this._onInput(e));
@@ -241,11 +242,11 @@ class PetkitFreshElementCard extends HTMLElement {
         <button class="btn danger" data-a="cancel-feed">Annuler</button>
       </div>
 
-      <div class="section-title">Planning
+      <div class="section-title">Planning <span class="sub" style="margin:0 auto 0 8px">${entries.length} repas</span>
         <span><button class="btn ${globalOn ? "on" : ""}" data-a="toggle-global">${globalOn ? "Actif" : "Inactif"}</button>
-        <button class="btn" data-a="add">+ Ajouter</button></span></div>
-      ${entryHtml}
-      ${this._edit ? this._editorHtml(caps) : ""}
+        ${this._showSchedule ? `<button class="btn" data-a="add">+ Ajouter</button>` : ""}
+        <button class="btn" data-a="toggle-schedule">${this._showSchedule ? "Masquer" : "Afficher"}</button></span></div>
+      ${this._showSchedule ? entryHtml + (this._edit ? this._editorHtml(caps) : "") : ""}
 
       <div class="section-title">Réglages
         <button class="btn" data-a="toggle-settings">${this._showSettings ? "Masquer" : "Afficher"}</button></div>
@@ -322,6 +323,7 @@ class PetkitFreshElementCard extends HTMLElement {
       case "feed": this._call("text", "set_value", { entity_id: this._id("manual"), value: v }); break;
       case "cancel-feed": this._press("cancel_manual"); break;
       case "toggle-global": this._call("switch", "toggle", { entity_id: this._id("schedule") }); break;
+      case "toggle-schedule": this._showSchedule = !this._showSchedule; this._edit = null; this._render(); break;
       case "toggle-settings": this._showSettings = !this._showSettings; this._render(); break;
       case "toggle": this._call("switch", "toggle", { entity_id: this._id(k) }); break;
       case "reset-desiccant":
