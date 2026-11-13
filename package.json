@@ -1,0 +1,9 @@
+{
+  "name": "petkit-fresh-element-card",
+  "version": "0.02",
+  "description": "Lovelace card for the PetKit Fresh Element Solo feeder in Home Assistant / HACS",
+  "main": "petkit-fresh-element-card.js",
+  "keywords": ["home-assistant", "hacs", "custom-card", "lovelace", "petkit", "feeder"],
+  "author": "Thomas Guidez",
+  "license": "MIT"
+}
