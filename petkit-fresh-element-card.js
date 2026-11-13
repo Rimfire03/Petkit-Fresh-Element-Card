@@ -107,6 +107,33 @@ const I18N = {
   },
 };
 
+// texts of the simulated device and of the dev tools (dev builds only; a real device gets them from HA)
+const SIM_TXT = {
+  en: {
+    n_schedule: "Feeding schedule", n_manual: "Manual feed", n_manual_h1: "Manual feed hopper 1", n_manual_h2: "Manual feed hopper 2", n_cancel_manual: "Cancel manual feed",
+    n_reset_desiccant: "Reset desiccant", n_state: "Device status", n_error: "Error", n_food_low: "Food level", n_food_low_h1: "Food level hopper 1", n_food_low_h2: "Food level hopper 2",
+    n_feeding: "Feeding", n_battery: "Battery level", n_power_type: "Power type", n_desiccant_days: "Desiccant left days", n_planned_total: "Total planned", n_dispensed_total: "Total dispensed",
+    n_dispense_count: "Times dispensed", n_manual_total: "Manual dispensed", n_sw_meal_sound: "Feed sound", n_sw_light: "Indicator light", n_sw_child_lock: "Child lock",
+    n_sw_shortage: "Shortage alarm", n_sw_n_dispense: "Notif on dispense", n_sw_n_battery: "Notif on low battery", n_sw_n_desiccant: "Notif on desiccant change need", n_sw_n_refill: "Notif on refill need",
+    meal1: "Morning", meal2: "Noon", meal3: "Evening", no_error: "No error", food_blocked: "Food blocked", motor_error: "Motor error",
+    dev_model: "Simulated model", dev_state: "Status", dev_error: "Error", dev_food_low: "Food low", dev_feeding: "Feeding in progress", dev_battery: "Battery %", dev_desiccant: "Desiccant (d)",
+    dev_planned: "Planned", dev_dispensed: "Dispensed", dev_count: "Dispenses", dev_manual: "Manual", dev_on: "Simulation on: nothing is sent to the device",
+    dev_off: "Dev build: simulation of actions and information", dev_stop: "Stop simulation", dev_start: "Simulate",
+  },
+  fr: {
+    n_schedule: "Planning de distribution", n_manual: "Distribution manuelle", n_manual_h1: "Distribution manuelle réservoir 1", n_manual_h2: "Distribution manuelle réservoir 2",
+    n_cancel_manual: "Annuler la distribution manuelle", n_reset_desiccant: "Réinitialiser le déshydratant", n_state: "État de l'appareil", n_error: "Erreur", n_food_low: "Niveau de nourriture",
+    n_food_low_h1: "Niveau de nourriture réservoir 1", n_food_low_h2: "Niveau de nourriture réservoir 2", n_feeding: "Distribution", n_battery: "Niveau de batterie", n_power_type: "Type d'alimentation",
+    n_desiccant_days: "Jours de déshydratant restants", n_planned_total: "Total prévu", n_dispensed_total: "Total distribué", n_dispense_count: "Nombre de distributions", n_manual_total: "Distribué manuellement",
+    n_sw_meal_sound: "Son de distribution", n_sw_light: "Voyant lumineux", n_sw_child_lock: "Verrouillage enfant", n_sw_shortage: "Alarme de pénurie", n_sw_n_dispense: "Notification à la distribution",
+    n_sw_n_battery: "Notification batterie faible", n_sw_n_desiccant: "Notification changement de déshydratant", n_sw_n_refill: "Notification de remplissage",
+    meal1: "Matin", meal2: "Midi", meal3: "Soir", no_error: "Aucune erreur", food_blocked: "Nourriture bloquée", motor_error: "Erreur moteur",
+    dev_model: "Modèle simulé", dev_state: "État", dev_error: "Erreur", dev_food_low: "Réservoir bas", dev_feeding: "Distribution en cours", dev_battery: "Batterie %", dev_desiccant: "Déshydratant (j)",
+    dev_planned: "Planifié", dev_dispensed: "Distribué", dev_count: "Distributions", dev_manual: "Manuel", dev_on: "Simulation active : rien n'est envoyé à l'appareil",
+    dev_off: "Version dev : simulation des actions et des informations", dev_stop: "Arrêter la simulation", dev_start: "Simuler",
+  },
+};
+
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pad = (n) => String(Number(n) || 0).padStart(2, "0"); // numeric only: attribute values never reach the HTML raw
@@ -338,6 +365,7 @@ class PetkitFreshElementCard extends HTMLElement {
     for (const [k, v] of Object.entries(vars)) t = t.replace("{" + k + "}", v);
     return t;
   }
+  _t(key) { return (SIM_TXT[this._lang()] || SIM_TXT.en)[key] ?? SIM_TXT.en[key] ?? key; } // simulation / dev tools texts
   // entity name as translated by HA, without the device name
   _name(key) {
     const id = this._id(key), st = this._stId(id), h = this._hass;
@@ -408,25 +436,20 @@ class PetkitFreshElementCard extends HTMLElement {
     const val = (n) => (dual ? [n, n > 1 ? 1 : 0] : [d3 ? n * 10 : n]);
     const meal = (h, n, label, status, nat) => ({ key: String(h * 3600), hour: h, minute: 0, values: val(n), weekdays: plan ? null : all, label, status, native_status: nat,
       enabled: true, today: true, readonly: false });
-    const schedule = [meal(8, 1, "Morning", "unknown", "dispensed_schedule"), meal(12, 3, "Noon", "unknown", "dispensed_schedule"), meal(19, 3, "Evening", "pending", null)];
+    const schedule = [meal(8, 1, this._t("meal1"), "unknown", "dispensed_schedule"), meal(12, 3, this._t("meal2"), "unknown", "dispensed_schedule"), meal(19, 3, this._t("meal3"), "pending", null)];
     const gpp = this._gpp({ amount }) || 1;
     const total = schedule.reduce((n, x) => n + x.values.reduce((a, b) => a + b, 0) * gpp, 0);
     const pats = { d3: "^(" + Array.from({ length: 196 }, (_, i) => i + 5).join("|") + ")$", d1: "^(0|" + Array.from({ length: 20 }, (_, i) => (i + 1) * 20).join("|") + ")$",
       mini: "^(0|" + Array.from({ length: 10 }, (_, i) => (i + 1) * 5).join("|") + ")$", dual: "^(" + [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].join("|") + ")$" };
     const pat = d3 ? pats.d3 : m === "d1" ? pats.d1 : m === "mini" ? pats.mini : dual ? pats.dual : "^(10|20|30|40|50|0)$";
-    const names = { schedule: "Feeding schedule", manual: "Manual feed", manual_h1: "Manual feed hopper 1", manual_h2: "Manual feed hopper 2", cancel_manual: "Cancel manual feed",
-      reset_desiccant: "Reset desiccant", state: "Device status", error: "Error", food_low: "Food level", food_low_h1: "Food level hopper 1", food_low_h2: "Food level hopper 2",
-      feeding: "Feeding", battery: "Battery level", power_type: "Power type", desiccant_days: "Desiccant left days", planned_total: "Total planned", dispensed_total: "Total dispensed",
-      dispense_count: "Times dispensed", manual_total: "Manual dispensed", sw_meal_sound: "Feed sound", sw_light: "Indicator light", sw_child_lock: "Child lock",
-      sw_shortage: "Shortage alarm", sw_n_dispense: "Notif on dispense", sw_n_battery: "Notif on low battery", sw_n_desiccant: "Notif on desiccant change need", sw_n_refill: "Notif on refill need" };
-    const st = {}, set = (k, state, attributes = {}) => { st["sim." + k] = { state: String(state), attributes: { friendly_name: names[k], ...attributes } }; };
+    const st = {}, set = (k, state, attributes = {}) => { st["sim." + k] = { state: String(state), attributes: { friendly_name: this._t("n_" + k), ...attributes } }; };
     set("schedule", "on", { device_id: 1, capabilities: { compartments: dual ? 2 : 1, weekly: !plan, today_skip: true, global_toggle: true, labels: { required: true }, amount, actions },
       schedule, ...(plan ? { plan_weekdays: [1, 3, 5] } : {}) });
     if (plan) st["sim.schedule"].attributes.schedule.forEach((x) => (x.today = [1, 3, 5].includes(((new Date().getDay() + 6) % 7) + 1)));
     if (dual) { set("manual_h1", 0, { pattern: pat }); set("manual_h2", 0, { pattern: pat }); set("food_low_h1", "off"); set("food_low_h2", "off"); }
     else { set("manual", 0, { pattern: pat }); set("food_low", "off"); }
-    set("cancel_manual", "unknown"); set("reset_desiccant", "unknown"); set("state", "online_ac"); set("error", "No error"); set("feeding", "off");
-    set("battery", 100, { unit_of_measurement: "%" }); set("power_type", "main_power"); set("desiccant_days", 30, { unit_of_measurement: "d" });
+    set("cancel_manual", "unknown"); set("reset_desiccant", "unknown"); set("state", "online_ac"); set("error", "no_error"); set("feeding", "off");
+    set("battery", 100, { unit_of_measurement: "%" }); set("power_type", "main_power"); set("desiccant_days", 30, { unit_of_measurement: this._lang() === "fr" ? "j" : "d" });
     set("planned_total", total, { unit_of_measurement: d3 || !dual ? "g" : "" }); set("dispensed_total", 0, { unit_of_measurement: d3 || !dual ? "g" : "" });
     set("dispense_count", 0); set("manual_total", 0, { unit_of_measurement: d3 || !dual ? "g" : "" });
     for (const [k] of SETTINGS) set(k, k === "sw_child_lock" ? "off" : "on");
@@ -478,15 +501,15 @@ class PetkitFreshElementCard extends HTMLElement {
     const f = (label, inner) => `<label class="sim-field"><span>${label}</span>${inner}</label>`;
     const num = (k, label, step = 1) => f(label, `<input type="number" data-sim="${k}" step="${step}" min="0" value="${esc(this._st(k)?.state ?? "")}">`);
     const chk = (k, label) => f(label, `<input type="checkbox" data-sim="${k}" ${this._st(k)?.state === "on" ? "checked" : ""}>`);
-    const sel = (k, label, opts) => f(label, `<select data-sim="${k}">${opts.map((o) => `<option ${this._st(k)?.state === o ? "selected" : ""}>${o}</option>`).join("")}</select>`);
-    const modelSel = f("Modèle simulé", `<select data-simmodel="1">${Object.entries(MODELS).map(([k, m]) => `<option value="${k}" ${this._simModel === k ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select>`);
+    const sel = (k, label, opts) => f(label, `<select data-sim="${k}">${opts.map(([o, l]) => `<option value="${esc(o)}" ${this._st(k)?.state === o ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`);
+    const modelSel = f(this._t("dev_model"), `<select data-simmodel="1">${Object.entries(MODELS).map(([k, m]) => `<option value="${k}" ${this._simModel === k ? "selected" : ""}>${esc(m.name)}</option>`).join("")}</select>`);
     const fields = this._sim
-      ? `<div class="sim-fields">${modelSel}${sel("state", "État", ["online_ac", "online_battery", "offline"])}${sel("error", "Erreur", ["No error", "food_blocked", "motor_error"])}
-        ${chk("food_low", "Réservoir bas")}${chk("feeding", "Distribution en cours")}${num("battery", "Batterie %")}${num("desiccant_days", "Déshydratant (j)")}
-        ${num("planned_total", "Planifié", 10)}${num("dispensed_total", "Distribué", 10)}${num("dispense_count", "Distributions")}${num("manual_total", "Manuel", 10)}</div>`
+      ? `<div class="sim-fields">${modelSel}${sel("state", this._t("dev_state"), [["online_ac", this._l("online_ac")], ["online_battery", this._l("online_battery")], ["offline", this._l("offline")]])}${sel("error", this._t("dev_error"), ["no_error", "food_blocked", "motor_error"].map((o) => [o, this._t(o)]))}
+        ${chk("food_low", this._t("dev_food_low"))}${chk("feeding", this._t("dev_feeding"))}${num("battery", this._t("dev_battery"))}${num("desiccant_days", this._t("dev_desiccant"))}
+        ${num("planned_total", this._t("dev_planned"), 10)}${num("dispensed_total", this._t("dev_dispensed"), 10)}${num("dispense_count", this._t("dev_count"))}${num("manual_total", this._t("dev_manual"), 10)}</div>`
       : "";
-    return `<div class="dev-tools"><span class="dev-tools-title">${this._sim ? "Simulation active : rien n'est envoyé à l'appareil" : "Version dev : simulation des actions et des informations"}</span>
-      <button class="dev-tools-btn ${this._sim ? "on" : ""}" data-a="sim-toggle">${this._sim ? "Arrêter la simulation" : "Simuler"}</button>${fields}</div>`;
+    return `<div class="dev-tools"><span class="dev-tools-title">${this._t(this._sim ? "dev_on" : "dev_off")}</span>
+      <button class="dev-tools-btn ${this._sim ? "on" : ""}" data-a="sim-toggle">${this._t(this._sim ? "dev_stop" : "dev_start")}</button>${fields}</div>`;
   }
   _onChange(e) {
     const k = e.target.dataset?.sim, t = e.target;
@@ -514,11 +537,11 @@ class PetkitFreshElementCard extends HTMLElement {
 
     const devState = this._st("state")?.state;
     const err = this._st("error")?.state;
-    const hasErr = err && !["No error", "unknown", "unavailable", "none"].includes(err);
+    const hasErr = err && !["no_error", "No error", "unknown", "unavailable", "none"].includes(err);
     const foodLow = ["food_low", "food_low_h1", "food_low_h2"].some((k) => this._st(k)?.state === "on");
     const offline = !devState || devState === "offline" || devState === "unavailable";
     const feeding = this._st("feeding")?.state === "on";
-    const badge = offline ? ["bad", this._l("offline")] : hasErr ? ["bad", this._hf(this._st("error")) || err] : feeding ? ["warn", this._l("feeding")] : foodLow ? ["warn", this._l("food_low")] : ["", I18N.en[devState] ? this._l(devState) : devState];
+    const badge = offline ? ["bad", this._l("offline")] : hasErr ? ["bad", this._hf(this._st("error")) || (this._sim ? this._t(err) : err)] : feeding ? ["warn", this._l("feeding")] : foodLow ? ["warn", this._l("food_low")] : ["", I18N.en[devState] ? this._l(devState) : devState];
 
     const stat = (key, bad) => {
       const s = this._st(key);
