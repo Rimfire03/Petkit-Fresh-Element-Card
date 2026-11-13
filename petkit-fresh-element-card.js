@@ -23,7 +23,6 @@ const ENTITY_TEMPLATES = {
   feeding: "binary_sensor.{p}_alimentation",
   battery: "sensor.{p}_niveau_de_batterie",
   power_type: "sensor.{p}_type_d_alimentation",
-  rssi: "sensor.{p}_rssi",
   desiccant_days: "sensor.{p}_jours_restants_deshydratant",
   planned_total: "sensor.{p}_total_planifie",
   dispensed_total: "sensor.{p}_total_distribue",
@@ -233,7 +232,7 @@ class PetkitFreshElementCard extends HTMLElement {
       <div class="stats">
         ${stat("planned_total", "Planifié / jour", " g")}${stat("dispensed_total", "Distribué aujourd'hui", " g")}
         ${stat("dispense_count", "Distributions", "")}${stat("manual_total", "Manuel", " g")}
-        ${stat("desiccant_days", "Déshydratant", " j", isNum(desic) && parseFloat(desic.state) <= 3)}${stat("rssi", "Wi-Fi", " dBm")}
+        ${stat("desiccant_days", "Déshydratant", " j", isNum(desic) && parseFloat(desic.state) <= 3)}
       </div>
 
       <div class="section-title">Distribution manuelle <span class="sub">1 portion = ${GRAMS_PER_PORTION} g</span></div>
