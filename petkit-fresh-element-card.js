@@ -234,6 +234,7 @@ class PetkitFreshElementCard extends HTMLElement {
         ${stat("dispense_count", "Distributions", "")}${stat("manual_total", "Manuel", " g")}
         ${stat("desiccant_days", "Déshydratant", " j", isNum(desic) && parseFloat(desic.state) <= 3)}
       </div>
+      <div class="btn-row"><button class="btn" data-a="reset-desiccant"><ha-icon icon="mdi:water-percent" style="--mdc-icon-size:16px;vertical-align:-3px"></ha-icon> Réinitialiser le déshydratant</button></div>
 
       <div class="section-title">Distribution manuelle <span class="sub">1 portion = ${GRAMS_PER_PORTION} g</span></div>
       <div class="btn-row">
@@ -249,8 +250,7 @@ class PetkitFreshElementCard extends HTMLElement {
 
       <div class="section-title">Réglages
         <button class="btn" data-a="toggle-settings">${this._showSettings ? "Masquer" : "Afficher"}</button></div>
-      ${this._showSettings ? `<div class="settings">${SETTINGS.map(([k, , label, icon]) => this._settingHtml(k, label, icon)).join("")}</div>
-        <div class="btn-row" style="margin-top:8px"><button class="btn" data-a="reset-desiccant">Réinitialiser déshydratant</button></div>` : ""}
+      ${this._showSettings ? `<div class="settings">${SETTINGS.map(([k, , label, icon]) => this._settingHtml(k, label, icon)).join("")}</div>` : ""}
     </ha-card>`;
   }
 
