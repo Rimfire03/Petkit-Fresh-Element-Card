@@ -23,8 +23,13 @@ If you find this card helpful, consider buying me a coffee to support the develo
 
 - 🇬🇧 **English** (Default fallback)
 - 🇫🇷 **Français**
+- 🇩🇪 **Deutsch**
+- 🇪🇸 **Español**
+- 🇮🇹 **Italiano**
+- 🇳🇱 **Nederlands**
+- 🇵🇹 **Português**
 
-*The card uses the translations of Home Assistant first (entity names, units, weekdays, common buttons), then its own small dictionary. It follows your Home Assistant language, or `language: en | fr` in the card configuration.*
+*The card uses the translations of Home Assistant first (entity names, units, weekdays, common buttons), then its own small dictionary. It follows your Home Assistant language, or `language: en | fr | de | es | it | nl | pt` in the card configuration.*
 
 ---
 
@@ -93,7 +98,7 @@ device: e8f4df6a0bf836628288df28196dd3c7   # the only required option: your Petk
 # title: Fresh Element Solo                # optional
 # show_image: false                        # optional, compact card
 # image: /local/feeder.png                 # optional
-# language: en                             # optional: en | fr
+# language: en                             # optional: en | fr | de | es | it | nl | pt
 ```
 
 Use the visual editor to pick the device, no need to write its id.
@@ -107,7 +112,7 @@ Use the visual editor to pick the device, no need to write its id.
 | `title` | string | device name | Card title |
 | `show_image` | boolean | `true` | `false` hides the picture: compact card |
 | `image` | string | model picture | URL or `/local/...` of your own picture |
-| `language` | `en`, `fr` | Home Assistant language | Forces the language |
+| `language` | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt` | Home Assistant language | Forces the language |
 | `entities` | map | auto | Forces an entity, for example `entities: { battery: sensor.my_battery }` |
 
 The keys of `entities` are: `schedule`, `manual`, `manual_h1`, `manual_h2`, `cancel_manual`, `reset_desiccant`, `state`, `error`, `food_low`, `food_low_h1`, `food_low_h2`, `feeding`, `battery`, `power_type`, `desiccant_days`, `planned_total`, `dispensed_total`, `dispense_count`, `manual_total`, `sw_meal_sound`, `sw_light`, `sw_child_lock`, `sw_shortage`, `sw_n_dispense`, `sw_n_battery`, `sw_n_desiccant`, `sw_n_refill`.
@@ -172,7 +177,7 @@ device: e8f4df6a0bf836628288df28196dd3c7   # seule option requise : votre distri
 # title: Fresh Element Solo                # optionnel
 # show_image: false                        # optionnel, carte compacte
 # image: /local/distributeur.png           # optionnel
-# language: fr                             # optionnel : en | fr
+# language: fr                             # optionnel : en | fr | de | es | it | nl | pt
 ```
 
 Utilisez l'éditeur visuel pour choisir l'appareil, inutile de saisir son identifiant.
