@@ -52,7 +52,7 @@ If you find this card helpful, consider buying me a coffee to support the develo
 
 ## 🧰 Supported equipment
 
-The card works with the feeders of the [PetKit integration](https://github.com/Jezza34000/homeassistant_petkit) (`petkit`). The behaviour of each model is read from the feeding schedule entity, so a model the integration adds later works without a card update.
+This card was made to be compatible with the [PetKit integration](https://github.com/Jezza34000/homeassistant_petkit) (`petkit`) by Jezza34000, which must be installed. It works with the feeders of that integration. The behaviour of each model is read from the feeding schedule entity, so a model the integration adds later works without a card update.
 
 | Model | Type | Hoppers | Schedule weekdays | Amounts | Manual feed |
 |---|---|---|---|---|---|
@@ -131,7 +131,7 @@ The schedule uses the services `petkit.add_feeding_schedule_entry`, `edit_feedin
 
 ## 🧰 Équipements pris en charge
 
-La carte fonctionne avec les distributeurs de l'[intégration PetKit](https://github.com/Jezza34000/homeassistant_petkit) (`petkit`). Le comportement de chaque modèle est lu dans l'entité de planning, un modèle ajouté plus tard par l'intégration fonctionne donc sans mise à jour de la carte.
+Cette carte a été réalisée pour être compatible avec l'[intégration PetKit](https://github.com/Jezza34000/homeassistant_petkit) (`petkit`) de Jezza34000, qui doit être installée. Elle fonctionne avec les distributeurs de cette intégration. Le comportement de chaque modèle est lu dans l'entité de planning, un modèle ajouté plus tard par l'intégration fonctionne donc sans mise à jour de la carte.
 
 | Modèle | Type | Réservoirs | Jours du planning | Quantités | Distribution manuelle |
 |---|---|---|---|---|---|
