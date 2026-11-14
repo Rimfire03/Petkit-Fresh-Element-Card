@@ -105,6 +105,72 @@ const I18N = {
     st_dispensed_schedule: "Distribué (planning)", st_dispensed_remote: "Distribué (à distance)", st_dispensed_local: "Distribué (manuel)",
     st_cancelled: "Annulé", st_surplus_skipped: "Ignoré (surplus)", st_error: "Erreur", st_past_unknown: "Passé (inconnu)",
   },
+  de: {
+    cancel: "Abbrechen", save: "Speichern", delete: "Löschen", edit: "Bearbeiten", planning: "Zeitplan", meals: "{n} Mahlzeiten", active: "An", inactive: "Aus",
+    show: "Anzeigen", hide: "Ausblenden", add: "+ Hinzufügen", settings: "Einstellungen", portion_note: "1 Portion = {g} g", portions: "Portionen", hopper: "Behälter {n}",
+    offline: "Offline", feeding: "Fütterung…", food_low: "Futter niedrig", refill: "Nachfüllen", ac: "Netzbetrieb", no_meals: "Keine Mahlzeit geplant",
+    time: "Uhrzeit", name: "Name", amount: "Menge", days: "Tage", plan_days: "Tage (alle Mahlzeiten)",
+    skip_today: "Heute überspringen", restore_today: "Heute wiederherstellen", upcoming: "Anstehend", skipped_today: "Heute übersprungen",
+    confirm_reset: "Trockenmittel-Zähler zurücksetzen?", confirm_delete: "Diese Mahlzeit löschen?", pick_day: "Wähle mindestens einen Tag.", pick_amount: "Wähle eine Menge über null.",
+    online_ac: "Online · Netzbetrieb", online_battery: "Online · Batterie", no_device: "Wähle in der Kartenkonfiguration einen Petkit-Futterautomaten.",
+    st_dispensed_schedule: "Ausgegeben (Zeitplan)", st_dispensed_remote: "Ausgegeben (Fernbedienung)", st_dispensed_local: "Ausgegeben (manuell)",
+    st_cancelled: "Abgebrochen", st_surplus_skipped: "Übersprungen (Überschuss)", st_error: "Fehler", st_past_unknown: "Vergangen (unbekannt)",
+  },
+  es: {
+    cancel: "Cancelar", save: "Guardar", delete: "Eliminar", edit: "Editar", planning: "Horario", meals: "{n} comidas", active: "Activo", inactive: "Inactivo",
+    show: "Mostrar", hide: "Ocultar", add: "+ Añadir", settings: "Ajustes", portion_note: "1 porción = {g} g", portions: "porciones", hopper: "Depósito {n}",
+    offline: "Sin conexión", feeding: "Dispensando…", food_low: "Poca comida", refill: "Rellenar", ac: "Red eléctrica", no_meals: "Ninguna comida programada",
+    time: "Hora", name: "Nombre", amount: "Cantidad", days: "Días", plan_days: "Días (todas las comidas)",
+    skip_today: "Omitir hoy", restore_today: "Restaurar hoy", upcoming: "Próxima", skipped_today: "Omitida hoy",
+    confirm_reset: "¿Reiniciar el contador del desecante?", confirm_delete: "¿Eliminar esta comida?", pick_day: "Elige al menos un día.", pick_amount: "Elige una cantidad mayor que cero.",
+    online_ac: "En línea · red eléctrica", online_battery: "En línea · batería", no_device: "Elige un comedero Petkit en la configuración de la tarjeta.",
+    st_dispensed_schedule: "Dispensado (horario)", st_dispensed_remote: "Dispensado (remoto)", st_dispensed_local: "Dispensado (manual)",
+    st_cancelled: "Cancelado", st_surplus_skipped: "Omitido (excedente)", st_error: "Error", st_past_unknown: "Pasado (desconocido)",
+  },
+  it: {
+    cancel: "Annulla", save: "Salva", delete: "Elimina", edit: "Modifica", planning: "Programma", meals: "{n} pasti", active: "Attivo", inactive: "Disattivo",
+    show: "Mostra", hide: "Nascondi", add: "+ Aggiungi", settings: "Impostazioni", portion_note: "1 porzione = {g} g", portions: "porzioni", hopper: "Serbatoio {n}",
+    offline: "Offline", feeding: "Erogazione…", food_low: "Cibo in esaurimento", refill: "Riempi", ac: "Rete elettrica", no_meals: "Nessun pasto programmato",
+    time: "Ora", name: "Nome", amount: "Quantità", days: "Giorni", plan_days: "Giorni (tutti i pasti)",
+    skip_today: "Salta oggi", restore_today: "Ripristina oggi", upcoming: "In arrivo", skipped_today: "Saltato oggi",
+    confirm_reset: "Azzerare il contatore dell'essiccante?", confirm_delete: "Eliminare questo pasto?", pick_day: "Scegli almeno un giorno.", pick_amount: "Scegli una quantità maggiore di zero.",
+    online_ac: "Online · rete elettrica", online_battery: "Online · batteria", no_device: "Scegli un distributore Petkit nella configurazione della scheda.",
+    st_dispensed_schedule: "Erogato (programma)", st_dispensed_remote: "Erogato (remoto)", st_dispensed_local: "Erogato (manuale)",
+    st_cancelled: "Annullato", st_surplus_skipped: "Saltato (eccedenza)", st_error: "Errore", st_past_unknown: "Passato (sconosciuto)",
+  },
+  nl: {
+    cancel: "Annuleren", save: "Opslaan", delete: "Verwijderen", edit: "Bewerken", planning: "Schema", meals: "{n} maaltijden", active: "Aan", inactive: "Uit",
+    show: "Tonen", hide: "Verbergen", add: "+ Toevoegen", settings: "Instellingen", portion_note: "1 portie = {g} g", portions: "porties", hopper: "Reservoir {n}",
+    offline: "Offline", feeding: "Voeren…", food_low: "Voer laag", refill: "Bijvullen", ac: "Netstroom", no_meals: "Geen maaltijd gepland",
+    time: "Tijd", name: "Naam", amount: "Hoeveelheid", days: "Dagen", plan_days: "Dagen (alle maaltijden)",
+    skip_today: "Vandaag overslaan", restore_today: "Vandaag herstellen", upcoming: "Gepland", skipped_today: "Vandaag overgeslagen",
+    confirm_reset: "De droogmiddelteller resetten?", confirm_delete: "Deze maaltijd verwijderen?", pick_day: "Kies minstens één dag.", pick_amount: "Kies een hoeveelheid boven nul.",
+    online_ac: "Online · netstroom", online_battery: "Online · batterij", no_device: "Kies een Petkit-voerautomaat in de kaartconfiguratie.",
+    st_dispensed_schedule: "Uitgegeven (schema)", st_dispensed_remote: "Uitgegeven (op afstand)", st_dispensed_local: "Uitgegeven (handmatig)",
+    st_cancelled: "Geannuleerd", st_surplus_skipped: "Overgeslagen (overschot)", st_error: "Fout", st_past_unknown: "Verleden (onbekend)",
+  },
+  pt: {
+    cancel: "Cancelar", save: "Guardar", delete: "Eliminar", edit: "Editar", planning: "Horário", meals: "{n} refeições", active: "Ativo", inactive: "Inativo",
+    show: "Mostrar", hide: "Ocultar", add: "+ Adicionar", settings: "Definições", portion_note: "1 porção = {g} g", portions: "porções", hopper: "Depósito {n}",
+    offline: "Offline", feeding: "A distribuir…", food_low: "Pouca comida", refill: "Reabastecer", ac: "Rede elétrica", no_meals: "Nenhuma refeição programada",
+    time: "Hora", name: "Nome", amount: "Quantidade", days: "Dias", plan_days: "Dias (todas as refeições)",
+    skip_today: "Ignorar hoje", restore_today: "Restaurar hoje", upcoming: "Próxima", skipped_today: "Ignorada hoje",
+    confirm_reset: "Repor o contador do dessecante?", confirm_delete: "Eliminar esta refeição?", pick_day: "Escolha pelo menos um dia.", pick_amount: "Escolha uma quantidade superior a zero.",
+    online_ac: "Online · rede elétrica", online_battery: "Online · bateria", no_device: "Escolha um comedouro Petkit na configuração do cartão.",
+    st_dispensed_schedule: "Distribuído (horário)", st_dispensed_remote: "Distribuído (remoto)", st_dispensed_local: "Distribuído (manual)",
+    st_cancelled: "Cancelado", st_surplus_skipped: "Ignorado (excedente)", st_error: "Erro", st_past_unknown: "Passado (desconhecido)",
+  },
+};
+
+// editor form labels (the language comes from HA)
+const EDITOR_LABELS = {
+  en: { device: "Petkit feeder", model: "Model (auto = detected)", title: "Title", show_image: "Show picture", image: "Image (URL or /local/…)", language: "Language (en, fr…)" },
+  fr: { device: "Distributeur Petkit", model: "Modèle (auto = détecté)", title: "Titre", show_image: "Afficher l'image", image: "Image (URL ou /local/…)", language: "Langue (en, fr…)" },
+  de: { device: "Petkit-Futterautomat", model: "Modell (auto = erkannt)", title: "Titel", show_image: "Bild anzeigen", image: "Bild (URL oder /local/…)", language: "Sprache (en, fr…)" },
+  es: { device: "Comedero Petkit", model: "Modelo (auto = detectado)", title: "Título", show_image: "Mostrar imagen", image: "Imagen (URL o /local/…)", language: "Idioma (en, fr…)" },
+  it: { device: "Distributore Petkit", model: "Modello (auto = rilevato)", title: "Titolo", show_image: "Mostra immagine", image: "Immagine (URL o /local/…)", language: "Lingua (en, fr…)" },
+  nl: { device: "Petkit-voerautomaat", model: "Model (auto = gedetecteerd)", title: "Titel", show_image: "Afbeelding tonen", image: "Afbeelding (URL of /local/…)", language: "Taal (en, fr…)" },
+  pt: { device: "Comedouro Petkit", model: "Modelo (auto = detetado)", title: "Título", show_image: "Mostrar imagem", image: "Imagem (URL ou /local/…)", language: "Idioma (en, fr…)" },
 };
 
 // texts of the simulated device and of the dev tools (dev builds only; a real device gets them from HA)
@@ -756,10 +822,7 @@ class PetkitFreshElementCardEditor extends HTMLElement {
     if (!this._hass || !this._config) return;
     if (!this._form) {
       this._form = document.createElement("ha-form");
-      const fr = String(this._hass.locale?.language || this._hass.language || "").startsWith("fr");
-      const labels = fr
-        ? { device: "Distributeur Petkit", model: "Modèle (auto = détecté)", title: "Titre", show_image: "Afficher l'image", image: "Image (URL ou /local/…)", language: "Langue (en, fr…)" }
-        : { device: "Petkit feeder", model: "Model (auto = detected)", title: "Title", show_image: "Show picture", image: "Image (URL or /local/…)", language: "Language (en, fr…)" };
+      const labels = EDITOR_LABELS[String(this._hass.locale?.language || this._hass.language || "en").slice(0, 2).toLowerCase()] || EDITOR_LABELS.en;
       this._form.computeLabel = (s) => labels[s.name] || s.name;
       this._form.addEventListener("value-changed", (e) => {
         const config = { ...e.detail.value };
