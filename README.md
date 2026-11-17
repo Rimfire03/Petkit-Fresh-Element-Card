@@ -1,6 +1,6 @@
 # 🐶 Petkit Fresh Element Card
 
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg)](https://github.com/hacs/integration)
 [![GitHub release](https://img.shields.io/github/v/release/Rimfire03/Petkit-Fresh-Element-Card?include_prereleases)](https://github.com/Rimfire03/Petkit-Fresh-Element-Card/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-Donate-orange.svg?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/slide598b)
@@ -69,7 +69,7 @@ This card was made to be compatible with the [PetKit integration](https://github
 | Fresh Element dual hopper | `d4s` | 2 | per meal | portions per hopper | 1 – 10 per hopper |
 | Fresh Element dual hopper | `d4sh` | 2 | per meal | portions per hopper | 1 – 10 per hopper |
 
-> The picture of the Solo is built in. The other models show a generic icon until a picture is set with `image`. Only the Solo has been tested on a real device, the other models follow the integration data and are not tested.
+> The pictures of all models are built in (the D1 uses the Solo picture), and can be replaced with `image`. Only the Solo has been tested on a real device, the other models follow the integration data and are not tested.
 
 ---
 
@@ -77,9 +77,10 @@ This card was made to be compatible with the [PetKit integration](https://github
 
 ### Method 1: Via HACS (Recommended)
 
-1. Open **HACS** > three dots > **Custom repositories**.
-2. Add `https://github.com/Rimfire03/Petkit-Fresh-Element-Card` with the category **Dashboard** (Lovelace).
-3. Search **Petkit Fresh Element Card**, download it, then reload your browser.
+1. Open **HACS** and search **Petkit Fresh Element Card** (the card is in the HACS default store).
+2. Download it, then reload your browser.
+
+*Not listed yet? Open **HACS** > three dots > **Custom repositories**, add `https://github.com/Rimfire03/Petkit-Fresh-Element-Card` with the category **Dashboard**.*
 
 ### Method 2: Manual Installation
 
@@ -148,7 +149,7 @@ Cette carte a été réalisée pour être compatible avec l'[intégration PetKit
 | Fresh Element double réservoir | `d4s` | 2 | par repas | portions par réservoir | 1 – 10 par réservoir |
 | Fresh Element double réservoir | `d4sh` | 2 | par repas | portions par réservoir | 1 – 10 par réservoir |
 
-> L'image du Solo est intégrée. Les autres modèles affichent une icône générique tant qu'une image n'est pas définie avec `image`. Seul le Solo a été testé sur un vrai appareil, les autres modèles suivent les données de l'intégration et ne sont pas testés.
+> Les images de tous les modèles sont intégrées (le D1 utilise l'image du Solo) et peuvent être remplacées avec `image`. Seul le Solo a été testé sur un vrai appareil, les autres modèles suivent les données de l'intégration et ne sont pas testés.
 
 ---
 
@@ -156,9 +157,10 @@ Cette carte a été réalisée pour être compatible avec l'[intégration PetKit
 
 ### Méthode 1 : Via HACS (Recommandé)
 
-1. Ouvrez **HACS** > trois points > **Dépôts personnalisés**.
-2. Ajoutez `https://github.com/Rimfire03/Petkit-Fresh-Element-Card` avec la catégorie **Tableau de bord** (Lovelace).
-3. Cherchez **Petkit Fresh Element Card**, téléchargez-la, puis rechargez votre navigateur.
+1. Ouvrez **HACS** et cherchez **Petkit Fresh Element Card** (la carte est dans le magasin par défaut de HACS).
+2. Téléchargez-la, puis rechargez votre navigateur.
+
+*Pas encore listée ? Ouvrez **HACS** > trois points > **Dépôts personnalisés**, ajoutez `https://github.com/Rimfire03/Petkit-Fresh-Element-Card` avec la catégorie **Tableau de bord**.*
 
 ### Méthode 2 : Installation manuelle
 
