@@ -35,7 +35,7 @@ const ENTITY_SPECS = {
   cancel_manual: ["button", "cancel_manual_feed"],
   reset_desiccant: ["button", "reset_desiccant"],
   state: ["sensor", "device_status"],
-  error: ["sensor", "error"],
+  error: ["sensor", "error_message"],
   food_low: ["binary_sensor", "food_level"],
   food_low_h1: ["binary_sensor", "food_level_1"],
   food_low_h2: ["binary_sensor", "food_level_2"],
@@ -218,7 +218,8 @@ const STYLES = `
   .title { font-size: 1.25rem; font-weight: 600; letter-spacing: -.01em; }
   .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: .8rem; font-weight: 500; white-space: nowrap;
     background: rgba(76,175,80,.12); color: #2e7d32; }
-  .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #4caf50; }
+  .badge { min-width: 0; max-width: 60%; } .badge-txt { overflow: hidden; text-overflow: ellipsis; } /* the device error text can be long */
+  .badge .dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #4caf50; }
   .badge.warn { background: rgba(255,152,0,.14); color: #e65100; } .badge.warn .dot { background: #ff9800; }
   .badge.bad { background: rgba(239,68,68,.12); color: #d32f2f; } .badge.bad .dot { background: #f44336; animation: pulse 2s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,.7); } 70% { box-shadow: 0 0 0 6px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
@@ -632,7 +633,7 @@ class PetkitFreshElementCard extends HTMLElement {
     <ha-card>
       <div class="header">
         <div class="title">${esc(title)}</div>
-        <span class="badge ${badge[0]}"><span class="dot"></span>${esc(badge[1])}</span>
+        <span class="badge ${badge[0]}" title="${esc(badge[1])}"><span class="dot"></span><span class="badge-txt">${esc(badge[1])}</span></span>
       </div>
       ${this._devHtml()}
       <div class="${compact ? "chips-inline" : "image-container"}">
