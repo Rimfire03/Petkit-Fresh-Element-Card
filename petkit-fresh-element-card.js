@@ -241,8 +241,12 @@ const STYLES = `
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
   button.btn { padding: 8px 14px; border-radius: 16px; border: 1px solid var(--primary-color, #03a9f4); background: transparent; color: var(--primary-color, #03a9f4);
     font-size: .85rem; font-weight: 600; cursor: pointer; font-family: inherit; }
-  button.btn:hover, button.btn.on { background: var(--primary-color, #03a9f4); color: var(--text-primary-color, #fff); }
-  button.btn.danger { border-color: #d32f2f; color: #d32f2f; } button.btn.danger:hover { background: #d32f2f; color: #fff; }
+  button.btn.on, button.btn:active { background: var(--primary-color, #03a9f4); color: var(--text-primary-color, #fff); }
+  button.btn.danger { border-color: #d32f2f; color: #d32f2f; } button.btn.danger:active { background: #d32f2f; color: #fff; }
+  @media (hover: hover) { /* a touch screen keeps :hover after a tap, so only real pointers get it */
+    button.btn:hover { background: var(--primary-color, #03a9f4); color: var(--text-primary-color, #fff); }
+    button.btn.danger:hover { background: #d32f2f; color: #fff; }
+  }
   button.btn:disabled { opacity: .45; cursor: default; }
 
   .entry { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; margin-bottom: 8px; background: var(--secondary-background-color, rgba(128,128,128,.08)); }
