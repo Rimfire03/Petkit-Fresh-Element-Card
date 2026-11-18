@@ -671,7 +671,7 @@ class PetkitFreshElementCard extends HTMLElement {
       const unit = k === "manual" ? " g" : "";
       const note = single && gpp > 1 && caps.amount?.unit !== "g" ? `<span class="sub">${this._l("portion_note", { g: gpp })}</span>` : "";
       return `<div class="section-title">${esc(this._name(k))} ${note}</div>
-      <div class="btn-row">${vals.map((v) => `<button class="btn" data-a="feed" data-k="${k}" data-v="${v}">${v}${unit}</button>`).join("")}${i === keys.length - 1 ? cancel : ""}</div>`;
+      <div class="btn-row">${vals.map((v) => `<button class="btn${this._fed === `${k}|${v}` ? " on" : ""}" data-a="feed" data-k="${k}" data-v="${v}">${v}${unit}</button>`).join("")}${i === keys.length - 1 ? cancel : ""}</div>`;
     }).join("");
   }
 
@@ -756,6 +756,9 @@ class PetkitFreshElementCard extends HTMLElement {
       case "feed": { // single-hopper text entities accept up to 50 g: split bigger amounts, wait for each feed to end
         if (this._feedBusy) break;
         this._feedBusy = true; this._abortFeed = false;
+        this._fed = `${k}|${v}`; this._sig = ""; this._render(); // keep the tapped amount coloured for 5 s
+        clearTimeout(this._fedT);
+        this._fedT = setTimeout(() => { this._fed = null; this._sig = ""; this._render(); }, 5000);
         try {
           const id = this._id(k || "manual"), max = k === "manual" ? MAX_FEED_G : Infinity;
           for (let left = Number(v); left > 0 && !this._abortFeed; left -= max) {
