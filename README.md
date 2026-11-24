@@ -46,7 +46,7 @@ If you find this card helpful, consider buying me a coffee to support the develo
 
 ## ✨ Features
 
-- **Status at a glance**: badge with the device state (online on mains or battery, offline, feeding, food low, error), power or battery chip, desiccant days left, daily totals (planned, dispensed, number of feedings, manual).
+- **Status at a glance**: badge with the device state (online on mains or battery, offline, feeding, food low, error), power or battery chip, desiccant days left, daily totals (planned, dispensed, number of feedings, manual), and the food bowl fill percentage when available.
 - **Manual feeding**: quick buttons built from the amounts the feeder accepts (read from the Home Assistant entity). On the single-hopper models, **100 g** is sent as 2 × 50 g, the second one starting when the first one is finished. One row per hopper on the dual-hopper models. A **Cancel** button stops a running feed.
 - **Editable schedule** (folded by default): add, edit, delete a meal, skip or restore it for today, switch the whole plan on or off. Amounts are shown in grams or portions depending on the model, one slider per hopper on the dual-hopper models, and the weekdays are per meal or for the whole plan depending on the model.
 - **Settings**: meal sound, indicator light, child lock, shortage alarm and the notifications, with the names translated by Home Assistant.
@@ -116,7 +116,7 @@ Use the visual editor to pick the device, no need to write its id.
 | `language` | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt` | Home Assistant language | Forces the language |
 | `entities` | map | auto | Forces an entity, for example `entities: { battery: sensor.my_battery }` |
 
-The keys of `entities` are: `schedule`, `manual`, `manual_h1`, `manual_h2`, `cancel_manual`, `reset_desiccant`, `state`, `error`, `food_low`, `food_low_h1`, `food_low_h2`, `feeding`, `battery`, `power_type`, `desiccant_days`, `planned_total`, `dispensed_total`, `dispense_count`, `manual_total`, `sw_meal_sound`, `sw_light`, `sw_child_lock`, `sw_shortage`, `sw_n_dispense`, `sw_n_battery`, `sw_n_desiccant`, `sw_n_refill`.
+The keys of `entities` are: `schedule`, `manual`, `manual_h1`, `manual_h2`, `cancel_manual`, `reset_desiccant`, `state`, `error`, `food_low`, `food_low_h1`, `food_low_h2`, `feeding`, `battery`, `power_type`, `desiccant_days`, `planned_total`, `dispensed_total`, `dispense_count`, `manual_total`, `bowl_fill`, `sw_meal_sound`, `sw_light`, `sw_child_lock`, `sw_shortage`, `sw_n_dispense`, `sw_n_battery`, `sw_n_desiccant`, `sw_n_refill`.
 
 The schedule uses the services `petkit.add_feeding_schedule_entry`, `edit_feeding_schedule_entry`, `remove_feeding_schedule_entry`, `skip_scheduled_feed`, `restore_scheduled_feed` and `set_feeding_plan_weekdays`.
 
@@ -126,7 +126,7 @@ The schedule uses the services `petkit.add_feeding_schedule_entry`, `edit_feedin
 
 ## ✨ Fonctionnalités
 
-- **État en un coup d'œil** : badge d'état (en ligne secteur ou batterie, hors ligne, distribution, réservoir bas, erreur), pastille secteur ou batterie, jours de déshydratant restants, totaux du jour (planifié, distribué, nombre de distributions, manuel).
+- **État en un coup d'œil** : badge d'état (en ligne secteur ou batterie, hors ligne, distribution, réservoir bas, erreur), pastille secteur ou batterie, jours de déshydratant restants, totaux du jour (planifié, distribué, nombre de distributions, manuel) et niveau de remplissage de la gamelle en pourcentage si disponible.
 - **Distribution manuelle** : boutons rapides construits à partir des quantités acceptées par le distributeur (lues dans l'entité Home Assistant). Sur les modèles à un réservoir, **100 g** est envoyé en 2 × 50 g, la seconde partant quand la première est terminée. Une ligne par réservoir sur les modèles à deux réservoirs. Un bouton **Annuler** arrête une distribution en cours.
 - **Planning éditable** (replié par défaut) : ajouter, modifier, supprimer un repas, l'ignorer ou le rétablir pour aujourd'hui, activer ou couper tout le planning. Les quantités sont en grammes ou en portions selon le modèle, un curseur par réservoir sur les modèles à deux réservoirs, et les jours sont par repas ou pour tout le planning selon le modèle.
 - **Réglages** : son du repas, voyant lumineux, sécurité enfant, alarme de pénurie et notifications, avec les noms traduits par Home Assistant.
