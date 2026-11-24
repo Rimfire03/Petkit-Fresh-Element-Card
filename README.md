@@ -51,6 +51,7 @@ If you find this card helpful, consider buying me a coffee to support the develo
 - **Editable schedule** (folded by default): add, edit, delete a meal, skip or restore it for today, switch the whole plan on or off. Amounts are shown in grams or portions depending on the model, one slider per hopper on the dual-hopper models, and the weekdays are per meal or for the whole plan depending on the model.
 - **Settings**: meal sound, indicator light, child lock, shortage alarm and the notifications, with the names translated by Home Assistant.
 - **Desiccant**: reset button always visible.
+- **Camera preview** (optional): show the feeder camera’s snapshot and open Home Assistant’s camera controls and live view by tapping it.
 - **Compact mode**: hide the picture with `show_image: false`.
 - **Just pick the device**: the entities are found through the Home Assistant entity registry, in any language. The model is detected from the device, and can be forced.
 - **Visual editor**: device, model, title, picture, language.
@@ -113,6 +114,8 @@ Use the visual editor to pick the device, no need to write its id.
 | `title` | string | device name | Card title |
 | `show_image` | boolean | `true` | `false` hides the picture: compact card |
 | `image` | string | model picture | URL or `/local/...` of your own picture |
+| `show_camera` | boolean | `false` | Show a camera preview and open the camera dialog on tap |
+| `camera_entity` | entity id | auto | Camera to use if the feeder has multiple cameras or you want to select one manually |
 | `language` | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt` | Home Assistant language | Forces the language |
 | `entities` | map | auto | Forces an entity, for example `entities: { battery: sensor.my_battery }` |
 

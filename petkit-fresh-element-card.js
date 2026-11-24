@@ -164,13 +164,13 @@ const I18N = {
 
 // editor form labels (the language comes from HA)
 const EDITOR_LABELS = {
-  en: { device: "Petkit feeder", model: "Model (auto = detected)", title: "Title", show_image: "Show picture", image: "Image (URL or /local/…)", language: "Language (en, fr…)" },
-  fr: { device: "Distributeur Petkit", model: "Modèle (auto = détecté)", title: "Titre", show_image: "Afficher l'image", image: "Image (URL ou /local/…)", language: "Langue (en, fr…)" },
-  de: { device: "Petkit-Futterautomat", model: "Modell (auto = erkannt)", title: "Titel", show_image: "Bild anzeigen", image: "Bild (URL oder /local/…)", language: "Sprache (en, fr…)" },
-  es: { device: "Comedero Petkit", model: "Modelo (auto = detectado)", title: "Título", show_image: "Mostrar imagen", image: "Imagen (URL o /local/…)", language: "Idioma (en, fr…)" },
-  it: { device: "Distributore Petkit", model: "Modello (auto = rilevato)", title: "Titolo", show_image: "Mostra immagine", image: "Immagine (URL o /local/…)", language: "Lingua (en, fr…)" },
-  nl: { device: "Petkit-voerautomaat", model: "Model (auto = gedetecteerd)", title: "Titel", show_image: "Afbeelding tonen", image: "Afbeelding (URL of /local/…)", language: "Taal (en, fr…)" },
-  pt: { device: "Comedouro Petkit", model: "Modelo (auto = detetado)", title: "Título", show_image: "Mostrar imagem", image: "Imagem (URL ou /local/…)", language: "Idioma (en, fr…)" },
+  en: { device: "Petkit feeder", model: "Model (auto = detected)", title: "Title", show_image: "Show picture", image: "Image (URL or /local/…)", show_camera: "Show camera", camera_entity: "Camera entity (optional)", language: "Language (en, fr…)" },
+  fr: { device: "Distributeur Petkit", model: "Modèle (auto = détecté)", title: "Titre", show_image: "Afficher l'image", image: "Image (URL ou /local/…)", show_camera: "Afficher la caméra", camera_entity: "Entité caméra (facultatif)", language: "Langue (en, fr…)" },
+  de: { device: "Petkit-Futterautomat", model: "Modell (auto = erkannt)", title: "Titel", show_image: "Bild anzeigen", image: "Bild (URL oder /local/…)", show_camera: "Kamera anzeigen", camera_entity: "Kamera-Entität (optional)", language: "Sprache (en, fr…)" },
+  es: { device: "Comedero Petkit", model: "Modelo (auto = detectado)", title: "Título", show_image: "Mostrar imagen", image: "Imagen (URL o /local/…)", show_camera: "Mostrar cámara", camera_entity: "Entidad de cámara (opcional)", language: "Idioma (en, fr…)" },
+  it: { device: "Distributore Petkit", model: "Modello (auto = rilevato)", title: "Titolo", show_image: "Mostra immagine", image: "Immagine (URL o /local/…)", show_camera: "Mostra fotocamera", camera_entity: "Entità fotocamera (opzionale)", language: "Lingua (en, fr…)" },
+  nl: { device: "Petkit-voerautomaat", model: "Model (auto = gedetecteerd)", title: "Titel", show_image: "Afbeelding tonen", image: "Afbeelding (URL of /local/…)", show_camera: "Camera tonen", camera_entity: "Camera-entiteit (optioneel)", language: "Taal (en, fr…)" },
+  pt: { device: "Comedouro Petkit", model: "Modelo (auto = detetado)", title: "Título", show_image: "Mostrar imagem", image: "Imagem (URL ou /local/…)", show_camera: "Mostrar câmera", camera_entity: "Entidade de câmera (opcional)", language: "Idioma (en, fr…)" },
 };
 
 // texts of the simulated device and of the dev tools (dev builds only; a real device gets them from HA)
@@ -231,6 +231,12 @@ const STYLES = `
   .chip ha-icon { --mdc-icon-size: 16px; }
   .chip.bad { color: #d32f2f; border-color: #d32f2f; }
   .chip.tl { top: 4px; left: 4px; } .chip.tr { top: 4px; right: 4px; } .chip.bl { bottom: 4px; left: 4px; } .chip.br { bottom: 4px; right: 4px; }
+
+  button.camera-preview { display: block; width: 100%; margin: 0 0 16px; padding: 0; overflow: hidden; cursor: pointer;
+    border: 1px solid var(--divider-color); border-radius: 12px; color: var(--primary-text-color); background: var(--secondary-background-color); font: inherit; }
+  .camera-preview img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: contain; background: var(--card-background-color); }
+  .camera-preview span { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 8px; }
+  .camera-preview ha-icon { --mdc-icon-size: 18px; }
 
   .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; margin-bottom: 16px; }
   .stat { padding: 10px 8px; border-radius: 12px; text-align: center; background: var(--secondary-background-color, rgba(128,128,128,.08)); }
@@ -370,9 +376,12 @@ class PetkitFreshElementCard extends HTMLElement {
     this._hass = hass;
     if (!this._config) return;
     const sched = this._id("schedule");
-    const sig = this._entityIds().map((id) => {
+    const camera = this._cameraId();
+    const sig = [...this._entityIds(), camera].map((id) => {
       const s = id && hass.states[id];
-      return s ? s.state + (id === sched ? JSON.stringify(s.attributes.schedule) + JSON.stringify(s.attributes.plan_weekdays) : "") : "-";
+      if (!s) return "-";
+      if (id === camera) return JSON.stringify([id, s.state, s.attributes.entity_picture]);
+      return s.state + (id === sched ? JSON.stringify(s.attributes.schedule) + JSON.stringify(s.attributes.plan_weekdays) : "");
     }).join("|");
     if (sig === this._sig) return;
     this._sig = sig;
@@ -394,7 +403,9 @@ class PetkitFreshElementCard extends HTMLElement {
     if (this._mapSrc !== ents || this._mapDev !== dev) {
       this._mapSrc = ents; this._mapDev = dev; this._map = {};
       for (const [id, e] of Object.entries(ents)) {
-        if (e.device_id === dev && e.translation_key) this._map[id.split(".")[0] + "|" + e.translation_key] = id;
+        if (e.device_id !== dev) continue;
+        if (e.translation_key) this._map[id.split(".")[0] + "|" + e.translation_key] = id;
+        if (id.startsWith("camera.")) this._map.camera = this._map.camera === undefined ? id : null;
       }
     }
     return this._map;
@@ -406,6 +417,12 @@ class PetkitFreshElementCard extends HTMLElement {
     if (key === "schedule" && c.schedule) return c.schedule;
     const spec = ENTITY_SPECS[key];
     return spec ? this._entMap()[spec.join("|")] || null : null;
+  }
+  _cameraId() {
+    if (this._sim || this._config.show_camera !== true) return null;
+    const id = this._config.camera_entity;
+    if (id) return typeof id === "string" && id.startsWith("camera.") ? id : null;
+    return this._entMap().camera || null;
   }
   _entityIds() { return Object.keys(ENTITY_SPECS).map((k) => this._id(k)); }
   _stId(id) { return id ? (this._sim ? this._simStates[id] : this._hass?.states[id]) : undefined; }
@@ -642,6 +659,7 @@ class PetkitFreshElementCard extends HTMLElement {
         ${isNum(batt) && onBattery ? `<span class="chip tr"><ha-icon icon="mdi:battery"></ha-icon>${esc(batt.state)} %</span>` : `<span class="chip tr"><ha-icon icon="mdi:power-plug"></ha-icon>${this._l("ac")}</span>`}
         ${isNum(desic) ? `<span class="chip bl ${desicLow ? "bad" : ""}"><ha-icon icon="mdi:water-percent"></ha-icon>${esc(this._fmt(desic))}</span>` : ""}
       </div>
+      ${this._cameraHtml()}
       <div class="stats">
         ${stat("planned_total")}${stat("dispensed_total")}${stat("dispense_count")}${stat("manual_total")}${stat("desiccant_days", desicLow)}
       </div>
@@ -659,6 +677,20 @@ class PetkitFreshElementCard extends HTMLElement {
         <button class="btn" data-a="toggle-settings">${this._l(this._showSettings ? "hide" : "show")}</button></div>
       ${this._showSettings ? `<div class="settings">${SETTINGS.map(([k, icon]) => this._settingHtml(k, icon)).join("")}</div>` : ""}
     </ha-card>`;
+  }
+
+  _cameraHtml() {
+    const id = this._cameraId();
+    const state = this._stId(id);
+    if (!state) return "";
+    const picture = state.attributes.entity_picture;
+    const available = !["off", "unavailable", "unknown"].includes(state.state);
+    const hasPreview = available && typeof picture === "string" && picture.split("?")[0] === `/api/camera_proxy/${id}`;
+    const label = this._hass.localize?.("component.camera.entity_component._.name") || "Camera";
+    return `<button class="camera-preview" type="button" data-a="camera">
+      ${hasPreview ? `<img src="${esc(picture)}" alt="" loading="lazy">` : ""}
+      <span><ha-icon icon="mdi:video"></ha-icon>${esc(label)}</span>
+    </button>`;
   }
 
   _manualHtml(caps) {
@@ -745,6 +777,11 @@ class PetkitFreshElementCard extends HTMLElement {
     const el = e.target.closest("[data-a]");
     if (!el) return;
     const a = el.dataset.a, k = el.dataset.k, v = el.dataset.v;
+    if (a === "camera") {
+      const entityId = this._cameraId();
+      if (entityId) this.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId }, bubbles: true, composed: true }));
+      return;
+    }
     const attrs = this._st("schedule")?.attributes || {};
     const caps = attrs.capabilities || {};
     const base = { device_id: attrs.device_id };
@@ -840,13 +877,15 @@ class PetkitFreshElementCardEditor extends HTMLElement {
       this.appendChild(this._form);
     }
     this._form.hass = this._hass;
-    this._form.data = { model: "auto", show_image: true, ...this._config };
+    this._form.data = { model: "auto", show_image: true, show_camera: false, ...this._config };
     this._form.schema = [
       { name: "device", required: true, selector: { device: { integration: "petkit" } } },
       { name: "model", selector: { select: { mode: "dropdown", options: [{ value: "auto", label: "Auto" }, ...Object.entries(MODELS).map(([value, m]) => ({ value, label: m.name }))] } } },
       { name: "title", selector: { text: {} } },
       { name: "show_image", selector: { boolean: {} } },
       { name: "image", selector: { text: {} } },
+      { name: "show_camera", selector: { boolean: {} } },
+      { name: "camera_entity", selector: { entity: { filter: [{ domain: "camera" }] } } },
       { name: "language", selector: { text: {} } },
     ];
   }
