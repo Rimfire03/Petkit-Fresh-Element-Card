@@ -47,6 +47,7 @@ const ENTITY_SPECS = {
   dispensed_total: ["sensor", "total_dispensed"],
   dispense_count: ["sensor", "times_dispensed"],
   manual_total: ["sensor", "manual_dispensed"],
+  bowl_fill: ["sensor", "food_bowl_percentage"],
   sw_meal_sound: ["switch", "feed_sound"],
   sw_light: ["switch", "indicator_light"],
   sw_child_lock: ["switch", "child_lock"],
@@ -643,7 +644,7 @@ class PetkitFreshElementCard extends HTMLElement {
         ${isNum(desic) ? `<span class="chip bl ${desicLow ? "bad" : ""}"><ha-icon icon="mdi:water-percent"></ha-icon>${esc(this._fmt(desic))}</span>` : ""}
       </div>
       <div class="stats">
-        ${stat("planned_total")}${stat("dispensed_total")}${stat("dispense_count")}${stat("manual_total")}${stat("desiccant_days", desicLow)}
+        ${stat("planned_total")}${stat("dispensed_total")}${stat("dispense_count")}${stat("manual_total")}${stat("bowl_fill")}${stat("desiccant_days", desicLow)}
       </div>
       ${this._id("reset_desiccant") ? `<div class="btn-row"><button class="btn" data-a="reset-desiccant"><ha-icon icon="mdi:water-percent" style="--mdc-icon-size:16px;vertical-align:-3px"></ha-icon> ${esc(this._name("reset_desiccant"))}</button></div>` : ""}
 
