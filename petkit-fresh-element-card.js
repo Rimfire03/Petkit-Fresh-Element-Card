@@ -17,6 +17,7 @@ const MAX_FEED_G = 50; // biggest amount the single-hopper manual feed entity ac
 // Models of the integration (device type code in brackets). The behaviour comes from the capabilities,
 // the model only gives a name and a picture. `match` is tried against the device model name of the registry.
 const MODELS = {
+  yumshare_solo_2: { name: "Yumshare Solo 2", match: /\byumshare solo 2\b/i },
   solo: { name: "Fresh Element Solo (D4)", match: /solo/i, image: SOLO_IMAGE },
   d4h: { name: "Fresh Element Solo D4H", match: /d4h/i, image: SOLO_IMAGE },
   d4s: { name: "Fresh Element dual hopper (D4S)", match: /d4s(?!h)/i, image: DUAL_IMAGE },
@@ -420,7 +421,7 @@ class PetkitFreshElementCard extends HTMLElement {
     const m = this._config.model;
     if (m && MODELS[m]) return m;
     const name = this._hass?.devices?.[this._device()]?.model || "";
-    const hit = ["d4sh", "d4s", "d4h", "solo", "mini", "d3", "d1"].find((k) => MODELS[k].match.test(name));
+    const hit = ["yumshare_solo_2", "d4sh", "d4s", "d4h", "solo", "mini", "d3", "d1"].find((k) => MODELS[k].match.test(name));
     if (hit) return hit;
     const caps = this._caps();
     if (caps.compartments === 2) return "d4s";
@@ -668,7 +669,7 @@ class PetkitFreshElementCard extends HTMLElement {
     const cancel = this._id("cancel_manual") ? `<button class="btn danger" data-a="cancel-feed">${this._l("cancel")}</button>` : "";
     return keys.map((k, i) => {
       const vals = this._manualValues(k);
-      if (k === "manual" && ["solo", "d4h"].includes(this._model()) && vals[vals.length - 1] === MAX_FEED_G) vals.push(MAX_FEED_G * 2); // Solo only: 100 g is sent as 2 x 50 g
+      if (k === "manual" && ["solo", "d4h", "yumshare_solo_2"].includes(this._model()) && vals[vals.length - 1] === MAX_FEED_G) vals.push(MAX_FEED_G * 2); // Solo only: 100 g is sent as 2 x 50 g
       const unit = k === "manual" ? " g" : "";
       const note = single && gpp > 1 && caps.amount?.unit !== "g" ? `<span class="sub">${this._l("portion_note", { g: gpp })}</span>` : "";
       return `<div class="section-title">${esc(this._name(k))} ${note}</div>
