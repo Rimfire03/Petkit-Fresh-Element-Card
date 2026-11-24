@@ -558,8 +558,8 @@ class PetkitFreshElementCard extends HTMLElement {
       } else if (service.startsWith("edit")) {
         upd(data.key, { hour: data.hour, minute: data.minute, values: data.values, weekdays: data.weekdays || null, label: data.label, today: runsToday(data.weekdays) });
       } else if (service.startsWith("remove")) list = list.filter((x) => x.key !== data.key);
-      else if (service.startsWith("skip")) upd(data.key, { status: "skipped" });
-      else if (service.startsWith("restore")) upd(data.key, { status: "pending" });
+      else if (service.startsWith("skip")) upd(data.key, { status: "skipped", native_status: "cancelled" });
+      else if (service.startsWith("restore")) upd(data.key, { status: "pending", native_status: null });
       else if (service.startsWith("set_feeding_plan")) { plan = data.weekdays; list = list.map((x) => ({ ...x, today: plan.includes(today) })); }
       this._simSet("schedule", this._st("schedule").state, { ...att, schedule: list, ...(plan ? { plan_weekdays: plan } : {}) });
       const gpp = this._gpp(att.capabilities || {}) || 1;
@@ -683,22 +683,30 @@ class PetkitFreshElementCard extends HTMLElement {
       `<button class="wd ${pd.includes(n) ? "on" : ""}" data-a="pwd" data-v="${n}" title="${esc(this._dayName(n, "long"))}">${esc(this._dayName(n, "narrow"))}</button>`).join("")}</div>`;
   }
 
+  _scheduleEntryAction(entry, caps) {
+    if (!caps.today_skip || !entry?.today) return null;
+    if (entry.status === "pending") return "skip";
+    if (entry.status === "skipped" && entry.native_status === "cancelled") return "unskip";
+    return null;
+  }
+
   _entryHtml(e, caps) {
     const days = e.weekdays || [];
-    const status = e.status === "skipped" ? "skipped" : e.native_status;
+    const status = e.native_status;
     const nat = NATIVE_ICONS[status];
-    const icon = e.status === "skipped" ? "mdi:debug-step-over" : nat ? nat : e.status === "pending" ? "mdi:clock-outline" : "mdi:help-circle-outline";
-    const title = e.status === "skipped" ? this._l("skipped_today") : nat ? this._l("st_" + status) : e.status === "pending" ? this._l("upcoming") : "";
+    const icon = nat || (e.status === "skipped" ? "mdi:debug-step-over" : e.status === "pending" ? "mdi:clock-outline" : "mdi:help-circle-outline");
+    const title = nat ? this._l("st_" + status) : e.status === "skipped" ? this._l("skipped_today") : e.status === "pending" ? this._l("upcoming") : "";
     const cls = e.status === "skipped" ? "skip" : (status || "").startsWith("dispensed") ? "ok" : "";
-    const canSkip = caps.today_skip && e.today && (e.status === "pending" || e.status === "skipped");
+    const action = this._scheduleEntryAction(e, caps);
+    const restore = action === "unskip";
     const dayChips = caps.weekly === false ? "" : `<div class="days">${[1, 2, 3, 4, 5, 6, 7].map((n) =>
       `<span class="day ${days.includes(n) ? "on" : ""}" title="${esc(this._dayName(n, "long"))}">${esc(this._dayName(n, "narrow"))}</span>`).join("")}</div>`;
     return `<div class="entry ${e.enabled === false ? "off" : ""}">
       <ha-icon class="status-ico ${cls}" icon="${icon}" title="${esc(title)}"></ha-icon>
       <div class="time">${pad(e.hour)}:${pad(e.minute)}</div>
-      <div class="mid"><div class="lbl">${esc(e.label || "—")}</div>${dayChips}</div>
+      <div class="mid"><div class="lbl">${esc(e.label || "—")}</div>${status === "surplus_skipped" ? `<div class="sub">${esc(title)}</div>` : ""}${dayChips}</div>
       <div class="amt">${esc(this._amtText(e.values || [], caps))}</div>
-      ${canSkip ? `<button class="icon-btn" title="${this._l(e.status === "skipped" ? "restore_today" : "skip_today")}" data-a="${e.status === "skipped" ? "unskip" : "skip"}" data-k="${esc(e.key)}"><ha-icon icon="${e.status === "skipped" ? "mdi:restore" : "mdi:debug-step-over"}"></ha-icon></button>` : ""}
+      ${action ? `<button class="icon-btn" title="${this._l(restore ? "restore_today" : "skip_today")}" data-a="${action}" data-k="${esc(e.key)}"><ha-icon icon="${restore ? "mdi:restore" : "mdi:debug-step-over"}"></ha-icon></button>` : ""}
       ${e.readonly ? "" : `<button class="icon-btn" title="${this._l("edit")}" data-a="edit" data-k="${esc(e.key)}"><ha-icon icon="mdi:pencil"></ha-icon></button>
       <button class="icon-btn" title="${this._l("delete")}" data-a="delete" data-k="${esc(e.key)}"><ha-icon icon="mdi:delete-outline"></ha-icon></button>`}
     </div>`;
@@ -817,8 +825,13 @@ class PetkitFreshElementCard extends HTMLElement {
       case "delete":
         if (confirm(this._l("confirm_delete"))) { const [d, s] = svc("remove"); this._call(d, s, { ...base, key: k }); }
         break;
-      case "skip": { const [d, s] = svc("skip_today"); this._call(d, s, { ...base, key: k }); break; }
-      case "unskip": { const [d, s] = svc("unskip_today"); this._call(d, s, { ...base, key: k }); break; }
+      case "skip":
+      case "unskip": {
+        if (this._scheduleEntryAction(find(k), caps) !== a) break;
+        const [d, s] = svc(a === "skip" ? "skip_today" : "unskip_today");
+        this._call(d, s, { ...base, key: k });
+        break;
+      }
     }
   }
 }
