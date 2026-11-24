@@ -63,13 +63,14 @@ This card was made to be compatible with the [PetKit integration](https://github
 |---|---|---|---|---|---|
 | Fresh Element Solo | `d4` | 1 | per meal | portions | 10 – 50 g (+ 100 g) |
 | Fresh Element Solo (D4H) | `d4h` | 1 | per meal | portions | 10 – 50 g (+ 100 g) |
+| Yumshare Solo 2 | `d4h` | 1 | per meal | portions | 10 – 50 g (+ 100 g) |
 | Fresh Element 3 | `d3` | 1 | per meal | grams (5 – 200) | 5 – 200 g |
 | Fresh Element | `feeder` (D1) | 1 | whole plan | portions | 20 – 400 g |
 | Fresh Element Mini | `feedermini` | 1 | whole plan | portions | 5 – 50 g |
 | Fresh Element dual hopper | `d4s` | 2 | per meal | portions per hopper | 1 – 10 per hopper |
 | Fresh Element dual hopper | `d4sh` | 2 | per meal | portions per hopper | 1 – 10 per hopper |
 
-> The pictures of all models are built in (the D1 uses the Solo picture), and can be replaced with `image`. Only the Solo has been tested on a real device, the other models follow the integration data and are not tested.
+> The Yumshare Solo 2 uses a placeholder by default. The D1 uses the Solo picture. Use `image` to supply a picture or replace a built-in one. Only the Solo has been tested on a real device, the other models follow the integration data and are not tested.
 
 ---
 
@@ -109,7 +110,7 @@ Use the visual editor to pick the device, no need to write its id.
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `device` | Device id | **required** | The Petkit feeder to display |
-| `model` | `solo`, `d4h`, `d3`, `d1`, `mini`, `d4s`, `d4sh` | auto | Forces the model (name and picture). The behaviour always follows the device capabilities |
+| `model` | `solo`, `d4h`, `d3`, `d1`, `mini`, `d4s`, `d4sh`, `yumshare_solo_2` | auto | Forces the model (name and picture). The behaviour always follows the device capabilities |
 | `title` | string | device name | Card title |
 | `show_image` | boolean | `true` | `false` hides the picture: compact card |
 | `image` | string | model picture | URL or `/local/...` of your own picture |
@@ -143,13 +144,14 @@ Cette carte a été réalisée pour être compatible avec l'[intégration PetKit
 |---|---|---|---|---|---|
 | Fresh Element Solo | `d4` | 1 | par repas | portions | 10 – 50 g (+ 100 g) |
 | Fresh Element Solo (D4H) | `d4h` | 1 | par repas | portions | 10 – 50 g (+ 100 g) |
+| Yumshare Solo 2 | `d4h` | 1 | par repas | portions | 10 – 50 g (+ 100 g) |
 | Fresh Element 3 | `d3` | 1 | par repas | grammes (5 – 200) | 5 – 200 g |
 | Fresh Element | `feeder` (D1) | 1 | tout le planning | portions | 20 – 400 g |
 | Fresh Element Mini | `feedermini` | 1 | tout le planning | portions | 5 – 50 g |
 | Fresh Element double réservoir | `d4s` | 2 | par repas | portions par réservoir | 1 – 10 par réservoir |
 | Fresh Element double réservoir | `d4sh` | 2 | par repas | portions par réservoir | 1 – 10 par réservoir |
 
-> Les images de tous les modèles sont intégrées (le D1 utilise l'image du Solo) et peuvent être remplacées avec `image`. Seul le Solo a été testé sur un vrai appareil, les autres modèles suivent les données de l'intégration et ne sont pas testés.
+> Le Yumshare Solo 2 affiche une icône par défaut. Le D1 utilise l'image du Solo. Utilisez `image` pour ajouter une photo ou remplacer une image intégrée. Seul le Solo a été testé sur un vrai appareil, les autres modèles suivent les données de l'intégration et ne sont pas testés.
 
 ---
 
